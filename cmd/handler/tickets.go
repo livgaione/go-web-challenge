@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"tickets/internal/service"
+	"tickets/pkg/apperrors"
 
 	"github.com/bootcamp-go/web/response"
 	"github.com/go-chi/chi/v5"
@@ -30,6 +32,10 @@ func (h *TicketHandler) GetAll() http.HandlerFunc {
 		s, err := h.service.GetAll(r.Context())
 
 		if err != nil {
+			if errors.Is(err, apperrors.ErrResourceNotExists) {
+				response.Error(w, http.StatusNotFound, "Not Found")
+				return
+			}
 
 			response.JSON(w, http.StatusBadGateway, err.Error())
 
@@ -52,17 +58,17 @@ func (h *TicketHandler) GetTicketByDestinationCountry() http.HandlerFunc {
 		s, err := h.service.GetTicketByDestinationCountry(country)
 
 		if err != nil {
-
-			response.JSON(w, http.StatusBadGateway, err.Error())
-
-			return
+			if errors.Is(err, apperrors.ErrResourceNotExists) {
+				response.Error(w, http.StatusNotFound, "Not Found")
+				return
+			}
 		}
 
 		response.JSON(w, http.StatusOK, map[string]any{
 			"data": s,
 		})
-
 	}
+
 }
 
 func (h *TicketHandler) GetAverage() http.HandlerFunc {
@@ -74,10 +80,10 @@ func (h *TicketHandler) GetAverage() http.HandlerFunc {
 		s, err := h.service.GetAverage(country)
 
 		if err != nil {
-
-			response.JSON(w, http.StatusBadGateway, err.Error())
-
-			return
+			if errors.Is(err, apperrors.ErrResourceNotExists) {
+				response.Error(w, http.StatusNotFound, "Not Found")
+				return
+			}
 		}
 
 		response.JSON(w, http.StatusOK, map[string]any{
@@ -85,4 +91,5 @@ func (h *TicketHandler) GetAverage() http.HandlerFunc {
 		})
 
 	}
+
 }
