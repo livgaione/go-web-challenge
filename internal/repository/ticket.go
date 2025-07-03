@@ -34,7 +34,6 @@ func (r *RepositoryTicketMap) Get(ctx context.Context) (t map[int]domain.TicketA
 }
 
 func (r *RepositoryTicketMap) GetTicketByDestinationCountry(country string) (t map[int]domain.TicketAttributes, err error) {
-
 	t = make(map[int]domain.TicketAttributes)
 	for k, v := range r.db {
 		if v.Country == country {
@@ -47,7 +46,6 @@ func (r *RepositoryTicketMap) GetTicketByDestinationCountry(country string) (t m
 }
 
 func (r *RepositoryTicketMap) GetAverage(country string) (int, error) {
-
 	var count int
 	var avg int
 
